@@ -33,9 +33,9 @@ namespace ECommerceApp.Business.Concrete
             return await _productDal.GetList();
         }
 
-        public Task<List<Product>> GetAllByCategoryId(int categoryId)
+        public async Task<List<Product>> GetAllByCategoryId(int categoryId)
         {
-            throw new NotImplementedException();
+            return await _productDal.GetList(p=>p.CategoryId==categoryId || categoryId == 0);
         }
 
         public Task<Product> GetByIdAsync(int id)
