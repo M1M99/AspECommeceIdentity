@@ -40,7 +40,7 @@ namespace ECommerceApp.Business.Concrete
 
         public Task<Product> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return _productDal.Get(p => p.ProductId == id);
         }
 
         public Task UpdateAsync(Product product)

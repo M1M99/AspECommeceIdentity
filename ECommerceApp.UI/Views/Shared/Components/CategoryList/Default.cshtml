@@ -1,5 +1,13 @@
 ﻿@model CategoryListViewModel
 <section class="list-group">
+    @if (Model.CurrentCategory == 0) 
+    { 
+        <a class="list-group-item active" style="cursor:pointer;" href="/product/index?category=0">All Categories</a>
+    }
+    else 
+    {
+        <a class="list-group-item" style="cursor:pointer;" href="/product/index?category=0">All Categories</a>
+    }
     @foreach (var item in Model.Categories)
     {
         var css = "list-group-item";
