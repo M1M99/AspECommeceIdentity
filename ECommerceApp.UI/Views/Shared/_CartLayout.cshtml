@@ -43,18 +43,13 @@
         </nav>
     </header>
     <div class="container">
-        <div class="row">
-            <div class="col-md-2">
-                @await Component.InvokeAsync("CategoryList")
-            </div>
-            <main role="main" class="pb-3 col-md-10">
-                @if (TempData["message"] != null)
-                {
-                    <div class="alert alert-info animate__animated animate__bounceInLeft" role="alert">@TempData["message"]</div>
-                }
-                @RenderBody()
-            </main>
-        </div>
+        <main>
+            @if (TempData["message"] != null)
+            {
+                <div class="alert alert-info animate__animated animate__bounceInLeft" role="alert">@TempData["message"]</div>
+            }
+            @RenderBody()
+        </main>
     </div>
     <footer class="border-top footer text-muted">
         <div class="container">
