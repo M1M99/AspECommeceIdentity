@@ -3,7 +3,9 @@ using ECommerceApp.Business.Abstract;
 using ECommerceApp.Business.Concrete;
 using ECommerceApp.DataAccess.Abstraction;
 using ECommerceApp.DataAccess.Concrete.EfEntityFramework;
+using ECommerceApp.UI.Entities;
 using ECommerceApp.UI.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,15 @@ builder.Services.AddDbContext<NorthwindContext>(options =>
 {
     options.UseSqlServer(conn);
 });
+
+builder.Services.AddDbContext<CustomIdentityDbContext>(options =>
+{
+    options.UseSqlServer(conn);
+});
+
+builder.Services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
+    .AddEntityFrameworkStores<CustomIdentityDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartSessionService, CartSessionService>();
@@ -45,6 +56,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();

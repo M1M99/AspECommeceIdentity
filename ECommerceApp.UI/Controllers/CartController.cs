@@ -33,12 +33,33 @@ namespace ECommerceApp.UI.Controllers
 
         public IActionResult List()
         {
-            var cart= _cartSessionService.GetCart();
+            var cart = _cartSessionService.GetCart();
             var model = new CartListViewModel
             {
                 Cart = cart
             };
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult Complete()
+        {
+            var shippingDetailViewModel = new ShippingDetailsViewModel
+            {
+                ShippingDetails=new ShippingDetails()
+            };
+            return View(shippingDetailViewModel);   
+        }
+
+        [HttpPost]
+        public IActionResult Complete(ShippingDetailsViewModel model)
+        {
+            if(!ModelState.IsValid) {
+                return View(model);
+            }
+            TempData.Add("message", $"You {model.ShippingDetails.Firstname} your order is in progress.");
+            return RedirectToAction("List");
+        }
+
     }
 }
