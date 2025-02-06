@@ -1,5 +1,6 @@
 ﻿using ECommerceApp.UI.Entities;
 using ECommerceApp.UI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,12 @@ namespace ECommerceApp.UI.Controllers
         }
 
         public IActionResult Register()
+        {
+            return View();
+        }
+
+        [Authorize(Roles ="Admin")]
+        public IActionResult RegisterEditor()
         {
             return View();
         }
@@ -57,6 +64,46 @@ namespace ECommerceApp.UI.Controllers
 
 
                     await _userManager.AddToRoleAsync(user, "Admin");
+                    return RedirectToAction("Login", "Account");
+
+                }
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RegisterEditor(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                CustomIdentityUser user = new CustomIdentityUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email,
+                };
+
+                IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    if (!(await _roleManager.RoleExistsAsync("Editor")))
+                    {
+                        CustomIdentityRole role = new CustomIdentityRole
+                        {
+                            Name = "Editor"
+                        };
+
+                        IdentityResult roleResult = await _roleManager.CreateAsync(role);
+                        if (!roleResult.Succeeded)
+                        {
+                            ModelState.AddModelError("RoleError", "We can not add the role!");
+                            return View(model);
+                        }
+                    }
+
+
+                    await _userManager.AddToRoleAsync(user, "Editor");
                     return RedirectToAction("Login", "Account");
 
                 }
