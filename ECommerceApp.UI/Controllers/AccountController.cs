@@ -26,7 +26,7 @@ namespace ECommerceApp.UI.Controllers
             return View();
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult RegisterEditor()
         {
             return View();
@@ -66,6 +66,49 @@ namespace ECommerceApp.UI.Controllers
                     await _userManager.AddToRoleAsync(user, "Admin");
                     return RedirectToAction("Login", "Account");
 
+                }
+            }
+            return View(model);
+        }
+
+        public IActionResult RegisterClient()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterClient(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                CustomIdentityUser customIdentityUser = new CustomIdentityUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email,
+                };
+
+                IdentityResult result = await _userManager.CreateAsync(customIdentityUser, model.Password);
+                if (result.Succeeded)
+                {
+                    if (!(await _roleManager.RoleExistsAsync("User")))
+                    {
+                        CustomIdentityRole role = new CustomIdentityRole
+                        {
+                            Name = "User"
+                        };
+
+                        IdentityResult result1 = await _roleManager.CreateAsync(role);
+                        if (!result1.Succeeded)
+                        {
+                            ModelState.AddModelError("RoleError", "Can't Add the role");
+                            return View(model);
+                        }
+
+                    }
+                    await _userManager.AddToRoleAsync(customIdentityUser, "User");
+                    TempData["Client"] = $"{customIdentityUser.UserName} Has Been Registered Success.";
+                    return RedirectToAction("LoginClient", "Account");
                 }
             }
             return View(model);
@@ -118,7 +161,7 @@ namespace ECommerceApp.UI.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Admin");
                 }
@@ -126,8 +169,27 @@ namespace ECommerceApp.UI.Controllers
             }
             return View(model);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginClient(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Client");
+                }
+                ModelState.AddModelError("", "Invalid Login");
+            }
+            return View(model);
+        }
 
 
+        public IActionResult LoginClient()
+        {
+            return View();
+        }
         public IActionResult Login()
         {
             return View();

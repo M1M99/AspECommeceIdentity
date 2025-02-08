@@ -15,6 +15,8 @@ namespace ECommerceApp.UI.Controllers
         public IActionResult Index2()
         {
             return View();
+        
         }
+        public IActionResult Index3() { return View(); }
     }
 }

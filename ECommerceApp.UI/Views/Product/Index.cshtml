@@ -6,6 +6,12 @@
 }
 else
 {
+    if (TempData["user"] is not null)
+    {
+        <h5>
+            Hi, @TempData["user"] @*Sadece 1 sorguluq adi cixarir check etmek ucun*@
+        </h5>
+    }
     <table class="table">
         <thead>
             <tr>
@@ -25,7 +31,7 @@ else
                     <td>@item.UnitsInStock</td>
                     <td>
                         <a href="/Cart/AddToCart?productId=@item.ProductId&page=@Model.CurrentPage&category=@Model.CurrentCategory"
-                        class="btn btn-xs btn-success">
+                           class="btn btn-xs btn-success">
                             Add To Cart
                         </a>
                     </td>
@@ -38,8 +44,7 @@ else
     <product-list-pager current-page="Model.CurrentPage"
                         page-count="Model.PageCount"
                         page-size="Model.PageSize"
-                        current-category="Model.CurrentCategory"
-    >
+                        current-category="Model.CurrentCategory">
 
     </product-list-pager>
 }
